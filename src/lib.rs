@@ -3,6 +3,7 @@ pub mod utils;
 use chrono::{Local, NaiveDateTime};
 use nix::unistd::{Gid, Group, Uid, User};
 use std::{
+    fmt,
     fs::{self, Metadata},
     io::Error,
     os::unix::prelude::{MetadataExt, PermissionsExt},
@@ -28,42 +29,7 @@ pub struct LongListItem {
 }
 
 impl LongListItem {
-    pub fn new(
-        file_type: char,
-        permissions: String,
-        hard_links_count: u64,
-        owner: String,
-        group: String,
-        size: u64,
-        date: String,
-        file_name: String,
-    ) -> Result<LongListItem, Error> {
-        Ok(LongListItem {
-            file_type,
-            permissions,
-            hard_links_count,
-            owner,
-            group,
-            size,
-            date,
-            file_name,
-        })
-    }
-
-    pub fn print_formatted(&self) {
-        println!(
-            "{}{}  {}  {}  {} {}  {} {}",
-            &self.file_type,
-            &self.permissions,
-            &self.hard_links_count,
-            &self.owner,
-            &self.group,
-            &self.size,
-            &self.date,
-            &self.file_name
-        );
-    }
-    pub fn into_long_list_item(metadata: &Metadata, filename: &str) -> LongListItem {
+    pub fn new(metadata: &Metadata, filename: &str) -> LongListItem {
         // generate directory char
         let file_type: char;
         if metadata.is_dir() {
@@ -115,6 +81,23 @@ impl LongListItem {
             date,
             file_name,
         }
+    }
+}
+
+impl fmt::Display for LongListItem {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}{}  {}  {}  {} {}  {} {}",
+            &self.file_type,
+            &self.permissions,
+            &self.hard_links_count,
+            &self.owner,
+            &self.group,
+            &self.size,
+            &self.date,
+            &self.file_name
+        )
     }
 }
 
@@ -173,11 +156,11 @@ pub fn list_ls(path: &str) -> Result<(), Error> {
     for entry in dir_iter {
         let entry_meta_data = entry.as_ref().unwrap().metadata().unwrap();
 
-        let long_list_item = LongListItem::into_long_list_item(
+        let long_list_item = LongListItem::new(
             &entry_meta_data,
             entry.as_ref().unwrap().file_name().to_str().unwrap(),
         );
-        long_list_item.print_formatted();
+        println!("{}", long_list_item);
     }
 
     Ok(())
