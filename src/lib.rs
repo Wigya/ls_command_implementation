@@ -31,12 +31,7 @@ pub struct LongListItem {
 impl LongListItem {
     pub fn new(metadata: &Metadata, filename: &str) -> LongListItem {
         // generate directory char
-        let file_type: char;
-        if metadata.is_dir() {
-            file_type = 'd';
-        } else {
-            file_type = '-';
-        }
+        let file_type: char = if metadata.is_dir() { 'd' } else { '-' };
 
         // generate permissions
         let oct: String = format!("{:o}", &metadata.permissions().mode());
@@ -58,7 +53,7 @@ impl LongListItem {
 
         let group = group.name;
 
-        // generate size
+        // generate file's size
         let size = metadata.size();
 
         // generate last time modified
