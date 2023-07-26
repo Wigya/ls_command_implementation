@@ -8,6 +8,7 @@ pub fn oct_to_rwx_permissions(oct: &String) -> String {
     oct_to_rwx.insert('6', "rw-");
     oct_to_rwx.insert('5', "r-x");
     oct_to_rwx.insert('4', "r--");
+    oct_to_rwx.insert('3', "-wx");
     oct_to_rwx.insert('2', "-w-");
     oct_to_rwx.insert('1', "--x");
     oct_to_rwx.insert('0', "---");
