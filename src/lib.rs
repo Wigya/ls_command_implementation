@@ -104,7 +104,7 @@ impl<'a> Config<'a> {
             flag: "",
         };
 
-        for arg in args {
+        args.into_iter().for_each(|arg| {
             if arg.contains("-") {
                 config.flag = arg;
             } else if arg.eq("ls") {
@@ -112,7 +112,7 @@ impl<'a> Config<'a> {
             } else {
                 config.path = arg;
             }
-        }
+        });
 
         Ok(config)
     }
@@ -130,12 +130,10 @@ pub fn run(config: &Config) -> Result<(), Error> {
 pub fn standard_ls(path: &str) -> Result<(), Error> {
     let dir_iter = fs::read_dir(path).unwrap();
 
-    for entry in dir_iter {
-        println!(
-            "{}  ",
-            entry.as_ref().unwrap().file_name().to_str().unwrap()
-        );
-    }
+    dir_iter.for_each(|entry| {
+        println!("{} ", entry.as_ref().unwrap().file_name().to_str().unwrap());
+    });
+
     Ok(())
 }
 
@@ -148,7 +146,7 @@ fn help_func() {
 pub fn list_ls(path: &str) -> Result<(), Error> {
     let dir_iter = std::fs::read_dir(path).unwrap();
 
-    for entry in dir_iter {
+    dir_iter.for_each(|entry| {
         let entry_meta_data = entry.as_ref().unwrap().metadata().unwrap();
 
         let long_list_item = LongListItem::new(
@@ -156,7 +154,7 @@ pub fn list_ls(path: &str) -> Result<(), Error> {
             entry.as_ref().unwrap().file_name().to_str().unwrap(),
         );
         println!("{}", long_list_item);
-    }
+    });
 
     Ok(())
 }
