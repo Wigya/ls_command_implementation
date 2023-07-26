@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn oct_to_rwx_permissions(oct: &String) -> String {
+pub fn oct_to_rwx_permissions(oct: &str) -> String {
     let mut result = String::new();
 
     let mut oct_to_rwx: HashMap<char, &str> = HashMap::new();
